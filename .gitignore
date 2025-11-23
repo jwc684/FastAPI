@@ -1,1 +1,5 @@
 /fastapienv/
+.env
+.env.local
+*.db
+!testdb.db

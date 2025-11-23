@@ -57,6 +57,10 @@ def render_login_page(request: Request):
 def render_register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
+@router.get("/about-page")
+def render_about_page(request: Request):
+    return templates.TemplateResponse("about.html", {"request": request})
+
 
 
 ### Endpoints ###

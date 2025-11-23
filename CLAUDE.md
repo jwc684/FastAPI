@@ -6,6 +6,47 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a FastAPI Todo application with user authentication, built using SQLAlchemy ORM and PostgreSQL (production) with support for MySQL and SQLite. The application uses JWT tokens for authentication and includes a web UI with Jinja2 templates.
 
+## Project Structure
+
+```
+fastapi/
+├── TodoApp/                  # Main application package
+│   ├── main.py              # FastAPI app entry point, router includes
+│   ├── database.py          # Database configuration and session management
+│   ├── models.py            # SQLAlchemy ORM models (Users, Todos)
+│   ├── alembic.ini          # Alembic configuration
+│   ├── alembic/             # Database migrations
+│   │   ├── env.py
+│   │   └── versions/        # Migration scripts
+│   ├── routers/             # API route handlers
+│   │   ├── auth.py          # Authentication endpoints (login, register, JWT)
+│   │   ├── todos.py         # Todo CRUD operations
+│   │   ├── admin.py         # Admin-only endpoints
+│   │   └── users.py         # User profile management
+│   ├── templates/           # Jinja2 HTML templates
+│   │   ├── layout.html      # Base template
+│   │   ├── navbar.html      # Navigation component
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   ├── todo.html        # Todo list page
+│   │   ├── add-todo.html
+│   │   └── edit-todo.html
+│   ├── hooks/               # Reusable hooks
+│   ├── static/              # CSS and JavaScript assets
+│   │   ├── css/
+│   │   └── js/
+│   └── test/                # Test suite
+│       ├── utils.py         # Test configuration and fixtures
+│       ├── test_auth.py
+│       ├── test_todos.py
+│       ├── test_admin.py
+│       └── test_users.py
+├── requirements.txt         # Python dependencies
+├── .env.example            # Example environment configuration
+├── books.py                # Legacy tutorial file (not part of main app)
+└── books2.py               # Legacy tutorial file (not part of main app)
+```
+
 ## Development Commands
 
 ### Running the Application
@@ -102,12 +143,31 @@ Test files override the main app's dependencies to use test database and mocked 
 
 ## Database Configuration
 
-The application supports multiple databases via `TodoApp/database.py`:
-- **Production**: PostgreSQL (currently active)
-- **Alternative**: MySQL via PyMySQL (commented)
-- **Development**: SQLite (commented)
+The application uses environment variables for database configuration via `TodoApp/database.py`.
 
-When switching databases, update the `SQLALCHEMY_DATABASE_URL` and uncomment the appropriate engine configuration.
+### Switching Between Environments
+
+**Local Development (SQLite)**:
+- Uses `.env` file with `DATABASE_URL=sqlite:///./todos.db`
+- Database file: `todos.db` in project root
+- Automatically used when `.env` exists
+
+**Production (PostgreSQL)**:
+- Remove or rename `.env` file to use production database
+- Falls back to remote PostgreSQL on Render.com (Singapore)
+- Or set `DATABASE_URL` environment variable in production
+
+**Environment File Setup**:
+```bash
+# Copy example and configure
+cp .env.example .env
+
+# Edit .env to set your preferred database
+# For local: DATABASE_URL=sqlite:///./todos.db
+# For PostgreSQL: DATABASE_URL=postgresql://user:password@host/database
+```
+
+The application automatically detects SQLite and applies required connection args (`check_same_thread: False`).
 
 ## Static Assets and Templates
 
@@ -119,3 +179,4 @@ When switching databases, update the `SQLALCHEMY_DATABASE_URL` and uncomment the
 ## Legacy Files
 
 `books.py` and `books2.py` are example/tutorial files demonstrating basic FastAPI concepts and are not part of the main application.
+- when making new page components, always add a link to that page in the header
